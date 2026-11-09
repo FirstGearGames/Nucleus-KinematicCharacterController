@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kinematic Character Controller for Nucleus</title>
+<style>
+:root { color-scheme: light dark; --bg: #ffffff; --fg: #1f2328; --muted: #656d76; --border: #d1d9e0; --code-bg: #f6f8fa; --accent: #0969da; }
+@media (prefers-color-scheme: dark) { :root { --bg: #0d1117; --fg: #e6edf3; --muted: #9198a1; --border: #30363d; --code-bg: #161b22; --accent: #4493f8; } }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; max-width: 920px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+h1, h2, h3 { line-height: 1.25; margin: 1.6em 0 0.6em; }
+h1 { font-size: 2em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; margin-top: 0; }
+h2 { font-size: 1.45em; border-bottom: 1px solid var(--border); padding-bottom: 0.3em; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font: 0.875em/1.45 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 0.1em 0.35em; overflow-wrap: anywhere; }
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1em; overflow-x: auto; }
+pre code { background: none; border: none; padding: 0; }
+table { border-collapse: collapse; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid var(--border); padding: 0.45em 0.8em; text-align: left; vertical-align: top; }
+th { background: var(--code-bg); }
+li { margin: 0.25em 0; }
+.lead { font-size: 1.1em; }
+</style>
+</head>
+<body>
+
+<h1>Kinematic Character Controller for Nucleus</h1>
+
+<p class="lead"><strong>Kinematic Character Controller 3.4.4 characters, predicted by the player who controls them and checked by the server every tick, with KCC's motor itself left untouched.</strong></p>
+
+<p>The player's client moves its character the moment a key is pressed. The server runs the same KCC simulation from the same input, and when the two disagree the client is put back on the server's state and replays its newer ticks. Moving platforms, the boat and the planet are predicted with the character, so riding them needs no correction. Everyone else's character is drawn from the server's state.</p>
+
+<h2>Install</h2>
+
+<ol>
+<li>Import Kinematic Character Controller 3.4.4 from the Asset Store.</li>
+<li>Import Nucleus for Unity, then this package.</li>
+</ol>
+
+<h2>Try it</h2>
+
+<ol>
+<li>In Unity 6000.6.4f1, open <code>Assets/Nucleus/Integrations/Kinematic Character Controller/Example/Scenes/NetworkCharacterPlayground.unity</code>.</li>
+<li>Press Play, then <strong>Start Host</strong>. You are the host's player at KCC's usual starting spot.</li>
+<li>For a second player, open a ParrelSync clone (<strong>ParrelSync &gt; Clones Manager</strong>), open the same scene there, press Play and <strong>Start Client</strong>. It connects to <code>127.0.0.1</code> on port 7777.</li>
+</ol>
+
+<table>
+<tr><th>Input</th><th>Does</th></tr>
+<tr><td>W A S D or the arrow keys</td><td>Move, relative to the camera.</td></tr>
+<tr><td>Mouse</td><td>Look. Left click locks the cursor again.</td></tr>
+<tr><td>Space</td><td>Jump.</td></tr>
+<tr><td>C, held</td><td>Crouch. The character stands up again once nothing is above it.</td></tr>
+<tr><td>Right mouse button, scroll wheel</td><td>Toggle first person, zoom.</td></tr>
+<tr><td>Return</td><td>Fire both cube launchers. The server fires them, so every player sees the same cubes.</td></tr>
+</table>
+
+<p>The playground is KCC's own <code>CharacterPlayground</code>, converted: eleven moving platforms, the boat on its timeline, the planet with its own gravity, six teleporters, two walking AI characters, seven loose cubes and the two launchers. KCC's original scene is still there and still plays offline.</p>
+
+<h2>How it works</h2>
+
+<p>KCC normally steps every motor and mover itself in <code>FixedUpdate</code>, and smooths them in <code>LateUpdate</code>. Under Nucleus a scene's <code>NetworkKinematicCharacterSystem</code> turns both off and steps KCC on the network tick instead:</p>
+
+<ol>
+<li>On each tick's early fixed update, every system this peer simulates enrolls its motor or mover. The server simulates every character; a client simulates the character it controls and the movers it predicts.</li>
+<li>Once every early fixed update has run, one <code>KinematicCharacterSystem.Simulate</code> steps the enrolled set in KCC's own order: mover velocities, every motor's first phase, mover moves, every motor's second phase. That order is what carries a character on a platform by the platform's move of the same tick.</li>
+<li>On the late fixed update, <code>ValidatedKinematicCharacterMotor</code> records the motor's whole state, KCC's own <code>KinematicCharacterMotorState</code> plus the capsule size, as validated members. The client sends a hash of them with its input; the server compares its own.</li>
+<li>On a mismatch Nucleus restores the client to the server's state for that tick and replays every tick since. Replayed ticks step KCC from the same hook, so the replay is the same simulation, not a separate code path.</li>
+</ol>
+
+<p>Characters and movers are drawn through a <code>GraphicalSmoother</code>, which slides the drawn pose across each tick, so a 30 tick per second simulation looks smooth and a correction never snaps. The character's root, its colliders and KCC's own math always stay at the true pose.</p>
+
+<h2>Put it on your own character</h2>
+
+<ol>
+<li>Add one <code>NetworkKinematicCharacterSystem</code> to the networked scene, beside the <code>UnityCoreManager</code>.</li>
+<li>On the character prefab, beside its <code>KinematicCharacterMotor</code> and your <code>ICharacterController</code>: add <code>NetworkSystemObject</code>, <code>ValidatedKinematicCharacterMotor</code> and a <code>GraphicalSmoother</code> whose <strong>Child Graphic</strong> is the object holding the meshes and the camera target.</li>
+<li>Write one <code>NucleusBehaviour</code> for your controller, as <code>NetworkExampleCharacter</code> does for <code>NetworkExampleCharacterController</code>:
+<ul>
+<li>input as <code>MemberRole.Predict</code> members, written on the controlling player's live tick, with presses declared <code>isCarriedForward: false</code>;</li>
+<li>your controller's own state (timers, flags, modes) as <code>MemberRole.Validate</code> members, recorded on <code>OnLateFixedUpdate</code> and put back in <code>OnReplayStarting</code>;</li>
+<li>the input handed to the controller on <code>OnEarlyFixedUpdate</code> of every simulated tick, replayed ones included.</li>
+</ul></li>
+<li>On every moving platform: <code>NetworkSystemObject</code>, <code>ValidatedPhysicsMover</code>, a <code>GraphicalSmoother</code> with Child Graphic off, and an <code>IMoverController</code> that reads <code>ValidatedPhysicsMover.SimulationTime</code> or the mover's own state instead of <code>Time.time</code>. <code>NetworkMovingPlatform</code> and <code>NetworkPlayableMover</code> are KCC's two examples done that way.</li>
+<li>Give each assembly definition that declares network types its own <code>[assembly: NetworkBundle(n)]</code>. This integration compiles into <code>Assembly-CSharp</code>, which is the main bundle and needs none.</li>
+<li>Run <strong>Tools &gt; Nucleus</strong>, Build tab, <strong>Rebuild Network Prefab Collection</strong>, and save the scene so its scene objects are stamped.</li>
+</ol>
+
+<h2>What changed in KCC</h2>
+
+<p>Nothing. KCC runs exactly as the Asset Store ships it, and this package adds nothing to its folder. KCC has no assembly definitions, so it compiles into <code>Assembly-CSharp</code>, and this integration has none either, so that it can reference KCC from the same assembly. That holds wherever KCC is imported, <code>Assets/Plugins</code> included.</p>
+
+<p>The networked characters run on <code>NetworkExampleCharacterController</code> rather than KCC's <code>ExampleCharacterController</code>. It moves the same way, but KCC's controller keeps its jump and crouch state in private fields, and a replay has to put that state back.</p>
+
+<h2>Things that look like bugs but are not</h2>
+
+<ul>
+<li><strong>A character spawned on a moving platform or the planet is corrected once or twice in its first second.</strong> A client predicts movers ahead of the server, as it predicts its own character, so the deck it lands on is a little further along than where the server placed the character. It settles within a few ticks and rides with no corrections after that.</li>
+<li><strong>Other players feel slightly behind when you bump into them.</strong> Only your own character and the movers are predicted; other players are where the server last said, a round trip behind you. Pushing into one can cost a correction.</li>
+<li><strong>The loose cubes do not move when you walk into them.</strong> KCC's example character is authored with <strong>Rigidbody Interaction Type</strong> None, so it treats them as walls, offline too. The cubes are the server's: knocked by a launched cube, every player sees the server's result.</li>
+<li><strong>A teleporter fires a tick after you step into it.</strong> KCC's teleporters react to trigger callbacks, which a replay cannot repeat. Here the character tests its own capsule against each teleporter at the start of every tick, so stepping in at the end of one tick teleports at the start of the next, on the server and in every replay alike.</li>
+<li><strong>The camera turns in small steps on a fast spinning platform.</strong> KCC turns the camera by the rotation its own interpolation gives the platform, which is off. The camera turns by the platform's drawn rotation from frame to frame instead.</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+
+<ul>
+<li><strong>Characters stand still and nothing logs.</strong> The scene has no <code>NetworkKinematicCharacterSystem</code>. Each character and mover logs <code>found no [NetworkKinematicCharacterSystem] in the scene</code> when it wakes.</li>
+<li><strong>Every tick on a platform is a correction.</strong> The platform moves by <code>Time.time</code> or keeps state of its own that a replay does not rewind. Move it from <code>SimulationTime</code> or from the mover's own pose, as <code>NetworkPlanet</code> does.</li>
+<li><strong>A character on a platform is corrected every tick only after a restore.</strong> The platform has no <code>ValidatedPhysicsMover</code>. A motor's attached rigidbody travels as the mover's system Id, and a rigidbody that is not a networked mover is restored as none.</li>
+<li><strong>The console says two assemblies register network types under the same bundle Id.</strong> An assembly with network types has no <code>[assembly: NetworkBundle(n)]</code> of its own.</li>
+</ul>
+
+<h2>Tests</h2>
+
+<p><code>Tests/KinematicCharacterLivePlayTests.cs</code> plays the playground between two editors over UDP. Each scenario is a pair: run <code>Server_&lt;Scenario&gt;</code> in the main editor's Test Runner (Play Mode) and <code>Client_&lt;Scenario&gt;</code> in a ParrelSync clone. The two meet through files in <code>%TEMP%/kcc-live-tests</code>, or the folder in <code>KCC_TEST_DIRECTORY</code>, on port 47781 unless <code>KCC_TEST_PORT</code> names another. Either side run alone times out. The tests compile into <code>Assembly-CSharp</code> with the integration, so this project turns on <strong>Enable playmode tests for all assemblies</strong> in Project Settings, Player.</p>
+
+<p><code>Tests/NetworkExampleCharacterControllerReplayTests.cs</code> runs in one editor with no network. It steps KCC by hand through a walk and a jump, puts the controller and motor back to the tick before the jump, replays the same input, and requires the replay to end within 0.0001 m of the original. That is the property a reconcile relies on, at a moment too fine to time between two processes.</p>
+
+<table>
+<tr><th>Scenario</th><th>What it plays</th><th>What must hold</th></tr>
+<tr><td>Walk</td><td>Walk, jump twice, strafe while crouched, walk back, then fire a launcher.</td><td>No reconcile and no server mismatch once settled; both end within 2 cm; the client's request fires the launcher and the cube reaches it.</td></tr>
+<tr><td>Lossy</td><td>The same over 60 ms latency, 10 ms jitter and 5% loss.</td><td>The server measures a round trip of at least 60 ms; both end within 2 cm.</td></tr>
+<tr><td>Correction</td><td>A short walk, then the server moves the standing character 1.5 m aside.</td><td>The client is reconciled, takes the move, and both end within 2 cm.</td></tr>
+<tr><td>Platform</td><td>Spawn on a sliding platform and ride it.</td><td>No reconcile and no server mismatch once settled; still on the platform at the end.</td></tr>
+<tr><td>Teleport</td><td>Spawn inside the teleporter to the planet, then walk on the planet.</td><td>Both sides on the planet; no reconcile and no server mismatch once settled.</td></tr>
+</table>
+
+</body>
+</html>
