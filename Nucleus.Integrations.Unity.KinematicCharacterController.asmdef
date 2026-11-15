@@ -1,0 +1,19 @@
+{
+    "name": "Nucleus.Integrations.Unity.KinematicCharacterController",
+    "rootNamespace": "",
+    "references": [
+        "KinematicCharacterController",
+        "Nucleus.Integrations.Unity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "NUCLEUS_KCC"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

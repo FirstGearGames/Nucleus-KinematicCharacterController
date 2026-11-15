@@ -13,9 +13,10 @@ The player's client moves its character the moment a key is pressed. The server 
 ## Install
 
 1. Import KCC from the Asset Store.
-2. Copy this repository into the project, for example to `Assets/Nucleus/Integrations/Kinematic Character Controller`. It has no assembly definitions and compiles into `Assembly-CSharp`, next to KCC.
-3. Open **Tools > Nucleus**, Build tab, and run **Rebuild Network Prefab Collection**.
-4. Add `Demo/Scenes/NetworkKccDemo.unity` to the build settings.
+2. In the Package Manager, choose **Install package from git URL** and enter `https://github.com/FirstGearGames/Nucleus-KinematicCharacterController.git`. Add `#v1.0.0` to the end to pin a release. Or copy this repository into the project's `Packages` or `Assets` folder.
+3. Wait for the editor to recompile. KCC ships with no assembly definitions, so its scripts compile into `Assembly-CSharp`, which a package cannot reference. On load, this package adds `KinematicCharacterController.asmdef` to KCC's `Core` folder and `KinematicCharacterController.Editor.asmdef` to `Core/Editor`, and adds `NUCLEUS_KCC` to the Scripting Define Symbols, which switches the rest of the package on. KCC's own scripts are not changed, and its examples still compile.
+4. Open **Tools > Nucleus**, Build tab, and run **Rebuild Network Prefab Collection**.
+5. Add `Demo/Scenes/NetworkKccDemo.unity` from this package to the build settings.
 
 ## Try the demo
 
@@ -61,13 +62,13 @@ Characters and movers are drawn through Nucleus's `GraphicalSmoother`, which sli
 | Folder | Holds |
 |---|---|
 | root | The integration: `NetworkKinematicCharacterSystem`, `ValidatedKinematicCharacterMotor`, `ValidatedPhysicsMover` and their components |
-| `Editor` | Inspectors |
+| `Editor` | Inspectors, and in `Editor/Setup` the step that gives KCC its assembly definitions |
 | `Demo` | The original demo: character, player, camera, path mover, teleporter, launcher, HUD, scene, prefabs and materials |
 | `Tests` | Live two-editor tests, a replay check for the demo controller and checks of the path mover |
 
 ## Tests
 
-`Tests/KinematicCharacterLivePlayTests.cs` plays the demo between two editors over UDP. Each scenario is a pair: run `Server_<Scenario>` in the main editor's Test Runner (Play Mode) and `Client_<Scenario>` in a ParrelSync clone. The two meet through files in `%TEMP%/kcc-live-tests`, or the folder in `KCC_TEST_DIRECTORY`, on port 47781 unless `KCC_TEST_PORT` names another. Either side run alone times out. Tests in `Assembly-CSharp` need **Enable playmode tests for all assemblies** in the Test Runner.
+`Tests/KinematicCharacterLivePlayTests.cs` plays the demo between two editors over UDP. Each scenario is a pair: run `Server_<Scenario>` in the main editor's Test Runner (Play Mode) and `Client_<Scenario>` in a ParrelSync clone. The two meet through files in `%TEMP%/kcc-live-tests`, or the folder in `KCC_TEST_DIRECTORY`, on port 47781 unless `KCC_TEST_PORT` names another. Either side run alone times out. Installed from git, the tests show in the Test Runner only when `com.firstgeargames.nucleus.kinematiccharactercontroller` is listed under `testables` in `Packages/manifest.json`.
 
 | Scenario | What it plays | What must hold |
 |---|---|---|
@@ -81,6 +82,8 @@ All five pass. `DemoCharacterControllerReplayTests` steps KCC by hand and fails 
 
 ## Things that look like bugs but are not
 
+- **Nothing in this package compiles, and there are no errors.** `NUCLEUS_KCC` is not set yet, or KCC is not imported. The setup sets it once it finds KCC's `KinematicCharacterMotor.cs`. If KCC already has an assembly definition under another name, the console says so: rename it to `KinematicCharacterController`.
+- **Errors after removing KCC.** Remove `NUCLEUS_KCC` from the Scripting Define Symbols as well.
 - **A client corrects once or twice in its first second.** Its first copy of each mover arrives a round trip old, and the first comparison with the server re-anchors it.
 - **Other players feel slightly behind when you bump into them.** Only your own character and the movers are predicted; other players are where the server last said.
 - **A teleporter fires a tick after you step into it.** The character tests its capsule against each teleporter at the start of every tick, so the server and every replay teleport on the same tick.

@@ -1,0 +1,24 @@
+{
+    "name": "Nucleus.Integrations.Unity.KinematicCharacterController.Demo.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Nucleus.Integrations.Unity.KinematicCharacterController.Demo",
+        "Nucleus.Integrations.Unity.KinematicCharacterController",
+        "KinematicCharacterController",
+        "Nucleus.Integrations.Unity",
+        "Nucleus.Integrations.Unity.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "NUCLEUS_KCC"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,30 @@
+{
+    "name": "Nucleus.Integrations.Unity.KinematicCharacterController.Tests",
+    "rootNamespace": "",
+    "references": [
+        "Nucleus.Integrations.Unity.KinematicCharacterController.Demo",
+        "Nucleus.Integrations.Unity.KinematicCharacterController",
+        "KinematicCharacterController",
+        "Nucleus.Integrations.Unity",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "Nucleus.dll",
+        "CodeBoost.dll",
+        "SynapseSocket.dll",
+        "Newfarm.Client.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "NUCLEUS_KCC"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
