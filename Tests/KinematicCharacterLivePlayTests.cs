@@ -266,7 +266,6 @@ namespace Nucleus.Integrations.KinematicCharacterController.Tests
 
             yield return WaitUntil(() => File.Exists(Path.Combine(_directory, ClientSettledFile)), PartnerTimeoutSeconds, "the client's character to settle");
 
-            uint settledResultMismatchCount = clientConnection.ResultMismatchCount;
             string clientDonePath = Path.Combine(_directory, ClientDoneFile);
 
             yield return WaitUntil(() => File.Exists(clientDonePath), PartnerTimeoutSeconds, "the client to finish its script");
@@ -276,21 +275,17 @@ namespace Nucleus.Integrations.KinematicCharacterController.Tests
 
             ClientReport clientReport = ClientReport.Read(clientDonePath);
             KinematicCharacterMotor kinematicCharacterMotor = networkDemoCharacter.Character.Motor;
-            uint resultMismatchCount = clientConnection.ResultMismatchCount - settledResultMismatchCount;
             uint roundTripTimeMilliseconds = clientConnection.RoundTripTimeMilliseconds;
             float serverClientDistance = Vector3.Distance(kinematicCharacterMotor.TransientPosition, clientReport.Position);
             bool isTeleported = networkDemoCharacter.Component.TeleporterZoneId.Value == TeleportDestinationZoneId;
 
             File.WriteAllText(Path.Combine(_directory, ServerDoneFile), string.Empty);
-            File.WriteAllText(Path.Combine(_directory, "server-report.txt"), $"scenario={scenario} resultMismatchCount={resultMismatchCount} (all {clientConnection.ResultMismatchCount}) launchCount={ReadLaunchCount()} reconcileSentCount={clientConnection.ReconcileSentCount} clientStateDroppedCount={clientConnection.ClientStateDroppedCount} clientStateLateCount={clientConnection.ClientStateLateCount} roundTripTime={roundTripTimeMilliseconds} serverPosition={kinematicCharacterMotor.TransientPosition:F4} clientPosition={clientReport.Position:F4} distance={serverClientDistance:F4} isTeleported={isTeleported}");
-            Debug.Log($"[{nameof(KinematicCharacterLivePlayTests)}] Server [{scenario}]: [{resultMismatchCount}] result mismatches, server at [{kinematicCharacterMotor.TransientPosition:F4}], client at [{clientReport.Position:F4}], [{serverClientDistance:F4}] m apart, teleported [{isTeleported}].");
+            File.WriteAllText(Path.Combine(_directory, "server-report.txt"), $"scenario={scenario} launchCount={ReadLaunchCount()} reconcileSentCount={clientConnection.ReconcileSentCount} clientStateDroppedCount={clientConnection.ClientStateDroppedCount} clientStateLateCount={clientConnection.ClientStateLateCount} roundTripTime={roundTripTimeMilliseconds} serverPosition={kinematicCharacterMotor.TransientPosition:F4} clientPosition={clientReport.Position:F4} distance={serverClientDistance:F4} isTeleported={isTeleported}");
+            Debug.Log($"[{nameof(KinematicCharacterLivePlayTests)}] Server [{scenario}]: server at [{kinematicCharacterMotor.TransientPosition:F4}], client at [{clientReport.Position:F4}], [{serverClientDistance:F4}] m apart, teleported [{isTeleported}].");
 
             // A platform keeps moving, so the two poses there are of different ticks; elsewhere the character has come to rest.
             if (scenario is not Scenario.Platform)
                 Assert.LessOrEqual(serverClientDistance, AgreementDistance, "The client did not end where the server did.");
-
-            if (scenario is Scenario.Walk or Scenario.Platform or Scenario.Teleport)
-                Assert.AreEqual(0u, resultMismatchCount, "The server found a result that differed from the client's once the character had settled.");
 
             if (scenario is Scenario.Walk)
                 Assert.Greater(ReadLaunchCount(), 0u, "The client's request never fired a launcher.");

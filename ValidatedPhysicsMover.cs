@@ -89,17 +89,6 @@ namespace Nucleus.Integrations.KinematicCharacterController
         }
 
         /// <inheritdoc/>
-        protected override void ApplySendInterval(SendInterval sendInterval)
-        {
-            ValidatedPhysicsMoverComponent validatedPhysicsMoverComponent = Component;
-            validatedPhysicsMoverComponent.Position.SetSendInterval(sendInterval);
-            validatedPhysicsMoverComponent.Rotation.SetSendInterval(sendInterval);
-            validatedPhysicsMoverComponent.Velocity.SetSendInterval(sendInterval);
-            validatedPhysicsMoverComponent.AngularVelocity.SetSendInterval(sendInterval);
-            validatedPhysicsMoverComponent.SimulatedTickCount.SetSendInterval(sendInterval);
-        }
-
-        /// <inheritdoc/>
         /// <remarks>Advances the clock to the tick being simulated, then enrolls the mover, which the scene's simulation steps once every system's early fixed update has run.</remarks>
         protected override void OnSimulatedEarlyFixedUpdate(StepDelta stepDelta)
         {

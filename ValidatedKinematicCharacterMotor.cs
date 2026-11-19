@@ -64,29 +64,6 @@ namespace Nucleus.Integrations.KinematicCharacterController
         }
 
         /// <inheritdoc/>
-        protected override void ApplySendInterval(SendInterval sendInterval)
-        {
-            ValidatedKinematicCharacterMotorComponent validatedKinematicCharacterMotorComponent = Component;
-            validatedKinematicCharacterMotorComponent.Position.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.Rotation.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.BaseVelocity.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.AttachedRigidbodyVelocity.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.AttachedMoverSystemId.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.IsUngroundForced.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.UngroundTimeRemaining.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.IsGroundFoundInLastMovementIteration.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.IsAnyGroundFound.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.IsStableOnGround.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.IsSnappingPrevented.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.GroundNormal.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.InnerGroundNormal.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.OuterGroundNormal.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.CapsuleRadius.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.CapsuleHeight.SetSendInterval(sendInterval);
-            validatedKinematicCharacterMotorComponent.CapsuleYOffset.SetSendInterval(sendInterval);
-        }
-
-        /// <inheritdoc/>
         /// <remarks>Enrolls the motor in the tick, which the scene's simulation steps once every system's early fixed update has run.</remarks>
         protected override void OnSimulatedEarlyFixedUpdate(StepDelta stepDelta)
         {
