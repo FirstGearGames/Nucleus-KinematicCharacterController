@@ -1,6 +1,6 @@
 {
   "name": "com.firstgeargames.nucleus.kinematiccharactercontroller",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Nucleus Kinematic Character Controller",
   "description": "Kinematic Character Controller characters predicted by the player who controls them and checked by the server every tick, on Nucleus. Needs Nucleus in the project and Kinematic Character Controller imported from the Asset Store.",
   "unity": "6000.6",

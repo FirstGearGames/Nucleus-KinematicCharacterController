@@ -13,7 +13,7 @@ The player's client moves its character the moment a key is pressed. The server 
 ## Install
 
 1. Import KCC from the Asset Store.
-2. In the Package Manager, choose **Install package from git URL** and enter `https://github.com/FirstGearGames/Nucleus-KinematicCharacterController.git`. Add `#v1.0.0` to the end to pin a release. Or copy this repository into the project's `Packages` or `Assets` folder.
+2. In the Package Manager, choose **Install package from git URL** and enter `https://github.com/FirstGearGames/Nucleus-KinematicCharacterController.git`. Add `#v1.0.1` to the end to pin a release. Or copy this repository into the project's `Packages` or `Assets` folder.
 3. Wait for the editor to recompile. KCC ships with no assembly definitions, so its scripts compile into `Assembly-CSharp`, which a package cannot reference. On load, this package adds `KinematicCharacterController.asmdef` to KCC's `Core` folder and `KinematicCharacterController.Editor.asmdef` to `Core/Editor`, and adds `NUCLEUS_KCC` to the Scripting Define Symbols, which switches the rest of the package on. KCC's own scripts are not changed, and its examples still compile.
 4. Open **Tools > Nucleus**, Build tab, and run **Rebuild Network Prefab Collection**.
 5. Add `Demo/Scenes/NetworkKccDemo.unity` from this package to the build settings.
