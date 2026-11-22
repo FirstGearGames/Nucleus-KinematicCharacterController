@@ -17,45 +17,45 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// <summary>
         /// How far forward or back the player is moving, from -1 to 1.
         /// </summary>
-        public readonly NetworkMember<float> MoveAxisForward = new(role: MemberRole.Predict, accuracy: AxisAccuracy);
+        public readonly NetworkMember<float> MoveAxisForward = new(role: PredictionRole.Predict, accuracy: AxisAccuracy);
         /// <summary>
         /// How far right or left the player is moving, from -1 to 1.
         /// </summary>
-        public readonly NetworkMember<float> MoveAxisRight = new(role: MemberRole.Predict, accuracy: AxisAccuracy);
+        public readonly NetworkMember<float> MoveAxisRight = new(role: PredictionRole.Predict, accuracy: AxisAccuracy);
         /// <summary>
         /// The camera's heading about the world's up axis, in degrees, which the move axes are relative to.
         /// </summary>
-        public readonly NetworkMember<float> CameraYaw = new(role: MemberRole.Predict, accuracy: AxisAccuracy);
+        public readonly NetworkMember<float> CameraYaw = new(role: PredictionRole.Predict, accuracy: AxisAccuracy);
         /// <summary>
         /// True on the tick the player pressed jump.
         /// </summary>
         /// <remarks>Not carried forward, so a tick of client state lost on the way is not taken as another press.</remarks>
-        public readonly NetworkMember<bool> IsJumpPressed = new(role: MemberRole.Predict, isCarriedForward: false);
+        public readonly NetworkMember<bool> IsJumpPressed = new(role: PredictionRole.Predict, isCarriedForward: false);
         /// <summary>
         /// True while the player holds crouch.
         /// </summary>
-        public readonly NetworkMember<bool> IsCrouchHeld = new(role: MemberRole.Predict);
+        public readonly NetworkMember<bool> IsCrouchHeld = new(role: PredictionRole.Predict);
         /// <summary>
         /// The seconds a pressed jump is still kept for.
         /// </summary>
-        public readonly NetworkMember<float> JumpBufferRemaining = new(role: MemberRole.Validate, accuracy: TimeAccuracy);
+        public readonly NetworkMember<float> JumpBufferRemaining = new(role: PredictionRole.Validate, accuracy: TimeAccuracy);
         /// <summary>
         /// The seconds left in which a jump is still allowed after leaving the ground.
         /// </summary>
-        public readonly NetworkMember<float> CoyoteRemaining = new(role: MemberRole.Validate, accuracy: TimeAccuracy);
+        public readonly NetworkMember<float> CoyoteRemaining = new(role: PredictionRole.Validate, accuracy: TimeAccuracy);
         /// <summary>
         /// True once a jump has been made and the character has not stood on stable ground since.
         /// </summary>
-        public readonly NetworkMember<bool> IsJumpConsumed = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsJumpConsumed = new(role: PredictionRole.Validate);
         /// <summary>
         /// True while the character is crouched.
         /// </summary>
-        public readonly NetworkMember<bool> IsCrouching = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsCrouching = new(role: PredictionRole.Validate);
         /// <summary>
         /// The zone of the teleporter the character stands in, or <see cref="NetworkTeleporter.UnsetZoneId"/> when it stands in none.
         /// </summary>
         /// <remarks>Arriving through a teleporter records the destination's zone, so the character is not sent straight back.</remarks>
-        public readonly NetworkMember<byte> TeleporterZoneId = new(role: MemberRole.Validate);
+        public readonly NetworkMember<byte> TeleporterZoneId = new(role: PredictionRole.Validate);
 
         /// <summary>
         /// The accuracy the move axes and the camera heading are rounded to.

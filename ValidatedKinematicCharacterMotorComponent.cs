@@ -22,71 +22,71 @@ namespace Nucleus.Integrations.KinematicCharacterController
         /// <summary>
         /// The motor's position.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> Position = new(role: MemberRole.Validate, accuracy: ValidatedTransformComponent.PositionAccuracy, resultTolerance: ValidatedTransformComponent.PositionResultTolerance);
+        public readonly NetworkMember<NumericsVector3> Position = new(role: PredictionRole.Validate, accuracy: ValidatedTransformComponent.PositionAccuracy, resultTolerance: ValidatedTransformComponent.PositionResultTolerance);
         /// <summary>
         /// The motor's rotation.
         /// </summary>
-        public readonly NetworkMember<NumericsQuaternion> Rotation = new(role: MemberRole.Validate, resultTolerance: ValidatedTransformComponent.RotationResultTolerance);
+        public readonly NetworkMember<NumericsQuaternion> Rotation = new(role: PredictionRole.Validate, resultTolerance: ValidatedTransformComponent.RotationResultTolerance);
         /// <summary>
         /// The velocity the character's controller moves the motor by, before any velocity an attached rigidbody adds.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> BaseVelocity = new(role: MemberRole.Validate, accuracy: VelocityAccuracy, resultTolerance: VelocityResultTolerance);
+        public readonly NetworkMember<NumericsVector3> BaseVelocity = new(role: PredictionRole.Validate, accuracy: VelocityAccuracy, resultTolerance: VelocityResultTolerance);
         /// <summary>
         /// The velocity the rigidbody the motor stands on gave it on the last update.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> AttachedRigidbodyVelocity = new(role: MemberRole.Validate, accuracy: VelocityAccuracy, resultTolerance: VelocityResultTolerance);
+        public readonly NetworkMember<NumericsVector3> AttachedRigidbodyVelocity = new(role: PredictionRole.Validate, accuracy: VelocityAccuracy, resultTolerance: VelocityResultTolerance);
         /// <summary>
         /// The system Id of the networked mover the motor stands on, or <see cref="NetworkSystem.UnsetId"/> when it stands on none.
         /// </summary>
-        public readonly NetworkMember<uint> AttachedMoverSystemId = new(role: MemberRole.Validate);
+        public readonly NetworkMember<uint> AttachedMoverSystemId = new(role: PredictionRole.Validate);
         /// <summary>
         /// True when the motor must skip ground probing on its next update, as it does just after a jump.
         /// </summary>
-        public readonly NetworkMember<bool> IsUngroundForced = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsUngroundForced = new(role: PredictionRole.Validate);
         /// <summary>
         /// The seconds left during which the motor keeps skipping ground probing.
         /// </summary>
-        public readonly NetworkMember<float> UngroundTimeRemaining = new(role: MemberRole.Validate, accuracy: TimeAccuracy);
+        public readonly NetworkMember<float> UngroundTimeRemaining = new(role: PredictionRole.Validate, accuracy: TimeAccuracy);
         /// <summary>
         /// True when the last movement iteration of the motor's update found any ground.
         /// </summary>
-        public readonly NetworkMember<bool> IsGroundFoundInLastMovementIteration = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsGroundFoundInLastMovementIteration = new(role: PredictionRole.Validate);
         /// <summary>
         /// True when the motor's last grounding found any ground, stable or not.
         /// </summary>
-        public readonly NetworkMember<bool> IsAnyGroundFound = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsAnyGroundFound = new(role: PredictionRole.Validate);
         /// <summary>
         /// True when the motor's last grounding found stable ground.
         /// </summary>
-        public readonly NetworkMember<bool> IsStableOnGround = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsStableOnGround = new(role: PredictionRole.Validate);
         /// <summary>
         /// True when the motor's last grounding prevented snapping to the ground.
         /// </summary>
-        public readonly NetworkMember<bool> IsSnappingPrevented = new(role: MemberRole.Validate);
+        public readonly NetworkMember<bool> IsSnappingPrevented = new(role: PredictionRole.Validate);
         /// <summary>
         /// The normal of the ground the motor's last grounding found.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> GroundNormal = new(role: MemberRole.Validate, resultTolerance: NormalResultTolerance);
+        public readonly NetworkMember<NumericsVector3> GroundNormal = new(role: PredictionRole.Validate, resultTolerance: NormalResultTolerance);
         /// <summary>
         /// The normal of the inner side of the step or ledge the motor's last grounding found.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> InnerGroundNormal = new(role: MemberRole.Validate, resultTolerance: NormalResultTolerance);
+        public readonly NetworkMember<NumericsVector3> InnerGroundNormal = new(role: PredictionRole.Validate, resultTolerance: NormalResultTolerance);
         /// <summary>
         /// The normal of the outer side of the step or ledge the motor's last grounding found.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> OuterGroundNormal = new(role: MemberRole.Validate, resultTolerance: NormalResultTolerance);
+        public readonly NetworkMember<NumericsVector3> OuterGroundNormal = new(role: PredictionRole.Validate, resultTolerance: NormalResultTolerance);
         /// <summary>
         /// The capsule's radius.
         /// </summary>
-        public readonly NetworkMember<float> CapsuleRadius = new(role: MemberRole.Validate);
+        public readonly NetworkMember<float> CapsuleRadius = new(role: PredictionRole.Validate);
         /// <summary>
         /// The capsule's height.
         /// </summary>
-        public readonly NetworkMember<float> CapsuleHeight = new(role: MemberRole.Validate);
+        public readonly NetworkMember<float> CapsuleHeight = new(role: PredictionRole.Validate);
         /// <summary>
         /// The capsule's vertical offset from the motor's position.
         /// </summary>
-        public readonly NetworkMember<float> CapsuleYOffset = new(role: MemberRole.Validate);
+        public readonly NetworkMember<float> CapsuleYOffset = new(role: PredictionRole.Validate);
 
         /// <summary>
         /// The accuracy velocities are rounded to on every write, in metres per second.

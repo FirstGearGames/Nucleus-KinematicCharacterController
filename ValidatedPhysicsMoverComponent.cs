@@ -16,22 +16,22 @@ namespace Nucleus.Integrations.KinematicCharacterController
         /// <summary>
         /// The mover's position.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> Position = new(role: MemberRole.Validate, accuracy: ValidatedTransformComponent.PositionAccuracy, resultTolerance: ValidatedTransformComponent.PositionResultTolerance);
+        public readonly NetworkMember<NumericsVector3> Position = new(role: PredictionRole.Validate, accuracy: ValidatedTransformComponent.PositionAccuracy, resultTolerance: ValidatedTransformComponent.PositionResultTolerance);
         /// <summary>
         /// The mover's rotation.
         /// </summary>
-        public readonly NetworkMember<NumericsQuaternion> Rotation = new(role: MemberRole.Validate, resultTolerance: ValidatedTransformComponent.RotationResultTolerance);
+        public readonly NetworkMember<NumericsQuaternion> Rotation = new(role: PredictionRole.Validate, resultTolerance: ValidatedTransformComponent.RotationResultTolerance);
         /// <summary>
         /// The velocity the mover's last update gave it, which carries the characters standing on it.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> Velocity = new(role: MemberRole.Validate, accuracy: ValidatedKinematicCharacterMotorComponent.VelocityAccuracy, resultTolerance: ValidatedKinematicCharacterMotorComponent.VelocityResultTolerance);
+        public readonly NetworkMember<NumericsVector3> Velocity = new(role: PredictionRole.Validate, accuracy: ValidatedKinematicCharacterMotorComponent.VelocityAccuracy, resultTolerance: ValidatedKinematicCharacterMotorComponent.VelocityResultTolerance);
         /// <summary>
         /// The angular velocity the mover's last update gave it, in radians per second, which turns the characters standing on it.
         /// </summary>
-        public readonly NetworkMember<NumericsVector3> AngularVelocity = new(role: MemberRole.Validate, accuracy: ValidatedKinematicCharacterMotorComponent.VelocityAccuracy, resultTolerance: ValidatedKinematicCharacterMotorComponent.VelocityResultTolerance);
+        public readonly NetworkMember<NumericsVector3> AngularVelocity = new(role: PredictionRole.Validate, accuracy: ValidatedKinematicCharacterMotorComponent.VelocityAccuracy, resultTolerance: ValidatedKinematicCharacterMotorComponent.VelocityResultTolerance);
         /// <summary>
         /// How many ticks the mover has been simulated for since it spawned, counting the tick being simulated.
         /// </summary>
-        public readonly NetworkMember<uint> SimulatedTickCount = new(role: MemberRole.Validate);
+        public readonly NetworkMember<uint> SimulatedTickCount = new(role: PredictionRole.Validate);
     }
 }

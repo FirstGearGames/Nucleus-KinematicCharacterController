@@ -51,8 +51,8 @@ Characters and movers are drawn through Nucleus's `GraphicalSmoother`, which sli
 1. Add one `NetworkKinematicCharacterSystem` to the networked scene, beside the `UnityCoreManager`.
 2. On the character prefab, beside its `KinematicCharacterMotor` and your `ICharacterController`, add `NetworkSystemObject`, `ValidatedKinematicCharacterMotor` and a `GraphicalSmoother` whose **Child Graphic** holds the meshes and the camera target.
 3. Write one `NucleusBehaviour` for your controller, as `NetworkDemoCharacter` does for `DemoCharacterController`:
-   - input as `MemberRole.Predict` members, written on the controlling player's live tick, with presses declared `isCarriedForward: false`;
-   - your controller's own state as `MemberRole.Validate` members, recorded on `OnLateFixedUpdate` and put back in `OnReplayStarting`;
+   - input as `PredictionRole.Predict` members, written on the controlling player's live tick, with presses declared `isCarriedForward: false`;
+   - your controller's own state as `PredictionRole.Validate` members, recorded on `OnLateFixedUpdate` and put back in `OnReplayStarting`;
    - the input handed to the controller on `OnEarlyFixedUpdate` of every simulated tick, replayed ones included.
 4. On every moving platform add `NetworkSystemObject`, `ValidatedPhysicsMover`, a `GraphicalSmoother` with Child Graphic off, and an `IMoverController` that reads `ValidatedPhysicsMover.SimulationTime` or the mover's own state, never `Time.time`. `NetworkPathMover` does this for a fixed path.
 5. Decide anything that changes how a character moves, such as a teleport, inside the tick from the motor's own pose. Trigger callbacks cannot be repeated by a replay; `NetworkTeleporter` and `NetworkDemoCharacter` show the pattern.
