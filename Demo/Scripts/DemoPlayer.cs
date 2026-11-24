@@ -31,26 +31,6 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         [Tooltip("The camera that follows the local character and that its movement is relative to.")]
         private DemoOrbitCamera _demoOrbitCamera;
         /// <summary>
-        /// The input axis for looking left and right.
-        /// </summary>
-        private const string MouseXInput = "Mouse X";
-        /// <summary>
-        /// The input axis for looking up and down.
-        /// </summary>
-        private const string MouseYInput = "Mouse Y";
-        /// <summary>
-        /// The input axis for zooming the camera.
-        /// </summary>
-        private const string MouseScrollInput = "Mouse ScrollWheel";
-        /// <summary>
-        /// The input axis for moving right and left.
-        /// </summary>
-        private const string HorizontalInput = "Horizontal";
-        /// <summary>
-        /// The input axis for moving forward and back.
-        /// </summary>
-        private const string VerticalInput = "Vertical";
-        /// <summary>
         /// The metres one notch of the scroll wheel zooms by.
         /// </summary>
         private const float ZoomPerScroll = 10f;
@@ -91,10 +71,10 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// <param name="networkDemoCharacterComponent">The component of the character this peer controls.</param>
         public void WriteClientState(NetworkDemoCharacterComponent networkDemoCharacterComponent)
         {
-            networkDemoCharacterComponent.MoveAxisForward.Value = Input.GetAxisRaw(VerticalInput);
-            networkDemoCharacterComponent.MoveAxisRight.Value = Input.GetAxisRaw(HorizontalInput);
+            networkDemoCharacterComponent.MoveAxisForward.Value = DemoInput.ReadMoveForward();
+            networkDemoCharacterComponent.MoveAxisRight.Value = DemoInput.ReadMoveRight();
             networkDemoCharacterComponent.CameraYaw.Value = _demoOrbitCamera.Yaw;
-            networkDemoCharacterComponent.IsCrouchHeld.Value = Input.GetKey(KeyCode.C);
+            networkDemoCharacterComponent.IsCrouchHeld.Value = DemoInput.IsCrouchHeld();
         }
 
         /// <summary>
@@ -107,10 +87,10 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// </summary>
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (DemoInput.WasClickPressed())
                 Cursor.lockState = CursorLockMode.Locked;
 
-            if (Input.GetKeyDown(KeyCode.Space) && NetworkDemoCharacter.Component is { } networkDemoCharacterComponent)
+            if (DemoInput.WasJumpPressed() && NetworkDemoCharacter.Component is { } networkDemoCharacterComponent)
                 networkDemoCharacterComponent.IsJumpPressed.Set();
         }
 
@@ -119,8 +99,8 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// </summary>
         private void LateUpdate()
         {
-            Vector2 lookInput = Cursor.lockState == CursorLockMode.Locked ? new(Input.GetAxisRaw(MouseXInput), Input.GetAxisRaw(MouseYInput)) : Vector2.zero;
-            _demoOrbitCamera.Orbit(lookInput, Input.GetAxis(MouseScrollInput) * ZoomPerScroll);
+            Vector2 lookInput = Cursor.lockState == CursorLockMode.Locked ? DemoInput.ReadLook() : Vector2.zero;
+            _demoOrbitCamera.Orbit(lookInput, DemoInput.ReadScroll() * ZoomPerScroll);
         }
     }
 }

@@ -4,7 +4,8 @@
     "references": [
         "Nucleus.Integrations.Unity.KinematicCharacterController",
         "KinematicCharacterController",
-        "Nucleus.Integrations.Unity"
+        "Nucleus.Integrations.Unity",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

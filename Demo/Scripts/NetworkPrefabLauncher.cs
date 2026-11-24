@@ -51,7 +51,7 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// </summary>
         private void Update()
         {
-            if (!Input.GetKeyDown(KeyCode.Return) || !IsStarted(Invoker.Client) || NetworkSystem is not { IsStarted: true } networkSystem)
+            if (!DemoInput.WasLaunchPressed() || !IsStarted(Invoker.Client) || NetworkSystem is not { IsStarted: true } networkSystem)
                 return;
 
             networkSystem.TrySendRpc(RpcTarget.Server, Channel.Reliable, new LaunchRequestedRpc());
