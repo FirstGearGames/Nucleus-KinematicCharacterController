@@ -24,6 +24,10 @@ namespace Nucleus.Integrations.KinematicCharacterController
         /// <summary>
         /// The velocity the mover's last update gave it, which carries the characters standing on it.
         /// </summary>
+        /// <remarks>
+        /// Separate from a standing character's <see cref="ValidatedKinematicCharacterMotorComponent.AttachedRigidbodyVelocity"/>: that is
+        /// what this gave the character at the point it stands, turning included, and the character keeps it for the tick it steps off.
+        /// </remarks>
         public readonly NetworkMember<NumericsVector3> Velocity = new(role: PredictionRole.Validate, accuracy: ValidatedKinematicCharacterMotorComponent.VelocityAccuracy, resultTolerance: ValidatedKinematicCharacterMotorComponent.VelocityResultTolerance);
         /// <summary>
         /// The angular velocity the mover's last update gave it, in radians per second, which turns the characters standing on it.

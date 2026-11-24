@@ -626,7 +626,10 @@ namespace Nucleus.Integrations.KinematicCharacterController.Tests
                 _networkDemoCharacterComponent.MoveAxisForward.Value = moveAxisForward;
                 _networkDemoCharacterComponent.MoveAxisRight.Value = moveAxisRight;
                 _networkDemoCharacterComponent.CameraYaw.Value = _cameraYaw;
-                _networkDemoCharacterComponent.IsJumpPressed.Value = isMoving && _scenario is not Scenario.Correction && (tick == SettleTicks + 20 || tick == SettleTicks + 60);
+                // A trigger set here lands on the next live tick.
+                if (isMoving && _scenario is not Scenario.Correction && (tick == SettleTicks + 20 || tick == SettleTicks + 60))
+                    _networkDemoCharacterComponent.IsJumpPressed.Set();
+
                 _networkDemoCharacterComponent.IsCrouchHeld.Value = isMoving && tick >= SettleTicks + 90 && tick < SettleTicks + 130;
             }
         }

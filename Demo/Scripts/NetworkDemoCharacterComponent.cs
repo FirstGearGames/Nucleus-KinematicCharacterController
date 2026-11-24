@@ -27,10 +27,10 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// </summary>
         public readonly NetworkMember<float> CameraYaw = new(role: PredictionRole.Predict, accuracy: AxisAccuracy);
         /// <summary>
-        /// True on the tick the player pressed jump.
+        /// True on the tick the player pressed jump. The controlling peer sets it whenever the key goes down, and its next live tick reads it.
         /// </summary>
         /// <remarks>Not carried forward, so a tick of client state lost on the way is not taken as another press.</remarks>
-        public readonly NetworkMember<bool> IsJumpPressed = new(role: PredictionRole.Predict, isCarriedForward: false);
+        public readonly NetworkTrigger IsJumpPressed = new();
         /// <summary>
         /// True while the player holds crouch.
         /// </summary>
@@ -38,18 +38,34 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         /// <summary>
         /// The seconds a pressed jump is still kept for.
         /// </summary>
+        /// <remarks>
+        /// Separate from <see cref="IsJumpPressed"/>, which is true on the press's tick alone: the character simulates this from the press
+        /// and counts it down over the ticks after, so a press made just before landing still jumps.
+        /// </remarks>
         public readonly NetworkMember<float> JumpBufferRemaining = new(role: PredictionRole.Validate, accuracy: TimeAccuracy);
         /// <summary>
         /// The seconds left in which a jump is still allowed after leaving the ground.
         /// </summary>
+        /// <remarks>
+        /// Separate from the motor's <see cref="ValidatedKinematicCharacterMotorComponent.IsStableOnGround"/>, which is false from the tick
+        /// the character leaves the ground: this keeps a jump allowed for a moment after.
+        /// </remarks>
         public readonly NetworkMember<float> CoyoteRemaining = new(role: PredictionRole.Validate, accuracy: TimeAccuracy);
         /// <summary>
         /// True once a jump has been made and the character has not stood on stable ground since.
         /// </summary>
+        /// <remarks>
+        /// Separate from <see cref="IsJumpPressed"/>, which says only that jump was pressed: this says a jump was made, and stays true until
+        /// the character lands, so a press in the air after a jump does not jump again.
+        /// </remarks>
         public readonly NetworkMember<bool> IsJumpConsumed = new(role: PredictionRole.Validate);
         /// <summary>
         /// True while the character is crouched.
         /// </summary>
+        /// <remarks>
+        /// Separate from <see cref="IsCrouchHeld"/>, the player's input: something above the character keeps it crouched after crouch is
+        /// let go, so the character simulates whether it is crouched itself.
+        /// </remarks>
         public readonly NetworkMember<bool> IsCrouching = new(role: PredictionRole.Validate);
         /// <summary>
         /// The zone of the teleporter the character stands in, or <see cref="NetworkTeleporter.UnsetZoneId"/> when it stands in none.

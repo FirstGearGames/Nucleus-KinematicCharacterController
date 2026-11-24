@@ -31,10 +31,6 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         [Tooltip("The camera that follows the local character and that its movement is relative to.")]
         private DemoOrbitCamera _demoOrbitCamera;
         /// <summary>
-        /// True when jump was pressed on a frame since the last tick took one.
-        /// </summary>
-        private bool _isJumpPressed;
-        /// <summary>
         /// The input axis for looking left and right.
         /// </summary>
         private const string MouseXInput = "Mouse X";
@@ -66,7 +62,6 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         public void SetCharacter(NetworkDemoCharacter networkDemoCharacter)
         {
             NetworkDemoCharacter = networkDemoCharacter;
-            _isJumpPressed = false;
 
             _demoOrbitCamera.SetTarget(networkDemoCharacter.Character.CameraTarget, networkDemoCharacter.GetComponentsInChildren<Collider>());
             Cursor.lockState = CursorLockMode.Locked;
@@ -90,7 +85,8 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         }
 
         /// <summary>
-        /// Writes this tick's input as the character's client state, and clears the jump the tick takes.
+        /// Writes this tick's input as the character's client state. The jump press lands on its own, from
+        /// <see cref="NetworkDemoCharacterComponent.IsJumpPressed"/>.
         /// </summary>
         /// <param name="networkDemoCharacterComponent">The component of the character this peer controls.</param>
         public void WriteClientState(NetworkDemoCharacterComponent networkDemoCharacterComponent)
@@ -98,10 +94,7 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
             networkDemoCharacterComponent.MoveAxisForward.Value = Input.GetAxisRaw(VerticalInput);
             networkDemoCharacterComponent.MoveAxisRight.Value = Input.GetAxisRaw(HorizontalInput);
             networkDemoCharacterComponent.CameraYaw.Value = _demoOrbitCamera.Yaw;
-            networkDemoCharacterComponent.IsJumpPressed.Value = _isJumpPressed;
             networkDemoCharacterComponent.IsCrouchHeld.Value = Input.GetKey(KeyCode.C);
-
-            _isJumpPressed = false;
         }
 
         /// <summary>
@@ -110,15 +103,15 @@ namespace Nucleus.Integrations.KinematicCharacterController.Demo
         private void Awake() => enabled = false;
 
         /// <summary>
-        /// Keeps a jump pressed on any frame until a tick takes it, and relocks the cursor on a click.
+        /// Sets the jump trigger on any frame jump is pressed, and relocks the cursor on a click.
         /// </summary>
         private void Update()
         {
             if (Input.GetMouseButtonDown(0))
                 Cursor.lockState = CursorLockMode.Locked;
 
-            if (Input.GetKeyDown(KeyCode.Space))
-                _isJumpPressed = true;
+            if (Input.GetKeyDown(KeyCode.Space) && NetworkDemoCharacter.Component is { } networkDemoCharacterComponent)
+                networkDemoCharacterComponent.IsJumpPressed.Set();
         }
 
         /// <summary>
