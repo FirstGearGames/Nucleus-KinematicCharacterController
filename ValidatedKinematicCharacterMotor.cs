@@ -43,10 +43,10 @@ namespace Nucleus.Integrations.KinematicCharacterController
         private NetworkKinematicCharacterSystem _networkKinematicCharacterSystem;
 
         /// <inheritdoc/>
-        /// <remarks>Declares the motor's state and the client state that makes the system predicted.</remarks>
+        /// <remarks>Declares the motor's state.</remarks>
         protected override bool TryDeclareSystem(NetworkSystemAcquiredHandler networkSystemAcquiredHandler, NetworkSystemReleasedHandler networkSystemReleasedHandler)
         {
-            NetworkSystemObjectPool.RequireSystem<NetworkSystem, ValidatedKinematicCharacterMotorComponent, ValidatedClientStateComponent>(this, networkSystemAcquiredHandler, networkSystemReleasedHandler);
+            NetworkSystemObjectPool.RequireSystem<NetworkSystem, ValidatedKinematicCharacterMotorComponent>(this, networkSystemAcquiredHandler, networkSystemReleasedHandler);
 
             return true;
         }

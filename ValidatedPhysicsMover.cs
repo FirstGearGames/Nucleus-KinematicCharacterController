@@ -47,10 +47,10 @@ namespace Nucleus.Integrations.KinematicCharacterController
         private NetworkKinematicCharacterSystem _networkKinematicCharacterSystem;
 
         /// <inheritdoc/>
-        /// <remarks>Declares the mover's state and the client state that makes the system predicted.</remarks>
+        /// <remarks>Declares the mover's state.</remarks>
         protected override bool TryDeclareSystem(NetworkSystemAcquiredHandler networkSystemAcquiredHandler, NetworkSystemReleasedHandler networkSystemReleasedHandler)
         {
-            NetworkSystemObjectPool.RequireSystem<NetworkSystem, ValidatedPhysicsMoverComponent, ValidatedClientStateComponent>(this, networkSystemAcquiredHandler, networkSystemReleasedHandler);
+            NetworkSystemObjectPool.RequireSystem<NetworkSystem, ValidatedPhysicsMoverComponent>(this, networkSystemAcquiredHandler, networkSystemReleasedHandler);
 
             return true;
         }
